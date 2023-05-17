@@ -36,7 +36,7 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final orderData = Provider.of<Orders>(context);
+    //final orderData = Provider.of<Orders>(context);
     return Scaffold(
         appBar: AppBar(
           title: Text('Your Orders'),
@@ -50,7 +50,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   child: CircularProgressIndicator(),
                 );
               } else {
-                if (dataSnapshot.error! == null) {
+                if (dataSnapshot.error != null) {
                   return const Center(
                       child: Text('AN Error noticed pls fix up'));
                 } else {

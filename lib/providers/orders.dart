@@ -47,8 +47,9 @@ class Orders with ChangeNotifier {
   Future<void> fetchandsetOrder() async {
     final url = Uri.parse(
         'https://bunbenakin--test-default-rtdb.firebaseio.com/orders.json');
-    final response = await http.get(url);
     final List<OrderItem> loadedOrders = [];
+    final response = await http.get(url);
+
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     if (extractedData == null) {
       return; // it means that ifit is null the function does nothing this because we do not have a presaved order so if it fetches the database and sees nothing it should just return null;
@@ -57,7 +58,7 @@ class Orders with ChangeNotifier {
       loadedOrders.add(OrderItem(
         Id: key,
         amount: value['amount'],
-        dateTime: DateTime.parse(value['dateTIme']),
+        dateTime: DateTime.parse(value['datetime']),
         product: (value['product'] as List<dynamic>)
             .map((item) => CartItem(
                 id: item['id'],
@@ -68,6 +69,7 @@ class Orders with ChangeNotifier {
       ));
     });
     _orders = loadedOrders.reversed.toList();
+    notifyListeners();
   }
 
   Future<void> addorder(List<CartItem> cartProducts, double total) async {
@@ -94,7 +96,7 @@ class Orders with ChangeNotifier {
           Id: json.decode(response.body)['name'],
           amount: total,
           product: cartProducts,
-          dateTime: timeStamp,
+          dateTime: DateTime.now(),
         ));
     notifyListeners();
   }

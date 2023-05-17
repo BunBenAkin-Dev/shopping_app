@@ -65,7 +65,9 @@ class ProductDataInfo with ChangeNotifier {
       final List<Product> loadedProducts = [];
       final extractedData = json.decode(response.body) as Map<String,
           dynamic>; // this tells dart that the values are dynamic
-
+      // if (extractedData == null) {
+      //   return;
+      // }
       extractedData.forEach((ProdId, ProdData) {
         loadedProducts.add(Product(
             id: ProdId,
@@ -78,7 +80,7 @@ class ProductDataInfo with ChangeNotifier {
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
-      throw (error);
+      throw error;
     }
   }
 

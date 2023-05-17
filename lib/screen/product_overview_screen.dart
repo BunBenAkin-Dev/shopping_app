@@ -24,7 +24,7 @@ class ProductOverviewScreen extends StatefulWidget {
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showOnlyfavourite = false;
   var _isInit = true;
-  bool _isLoading = false;
+  var _isLoading = false;
 
   @override
   void didChangeDependencies() {
@@ -52,27 +52,26 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         title: Text('MyShop'),
         actions: [
           PopupMenuButton(
-            onSelected: (FilterOptions selectedValue) {
-              setState(() {
-                if (selectedValue == FilterOptions.Favourites) {
-                  //this is the deciding factor the .all and .favourites
-                  _showOnlyfavourite = true;
-                } else {
-                  _showOnlyfavourite = false;
-                }
-              });
-            },
-            icon: Icon(Icons.more_vert),
-            itemBuilder: (_) => [
-              PopupMenuItem(
-                  child: Text('Only Favourites'),
-                  value: FilterOptions.Favourites),
-              PopupMenuItem(
-                child: Text('show all'),
-                value: FilterOptions.all,
-              ),
-            ],
-          ),
+              onSelected: (FilterOptions selectedValue) {
+                setState(() {
+                  if (selectedValue == FilterOptions.Favourites) {
+                    //this is the deciding factor the .all and .favourites
+                    _showOnlyfavourite = true;
+                  } else {
+                    _showOnlyfavourite = false;
+                  }
+                });
+              },
+              icon: Icon(Icons.more_vert),
+              itemBuilder: ((_) => [
+                    PopupMenuItem(
+                        child: Text('Only Favourites'),
+                        value: FilterOptions.Favourites),
+                    PopupMenuItem(
+                      child: Text('show all'),
+                      value: FilterOptions.all,
+                    ),
+                  ])),
           Consumer<Cart>(
               builder: (_, cart, ch) => Badge(
                     child: IconButton(
