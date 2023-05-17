@@ -10,6 +10,12 @@ import 'package:recap_shops/widget/manage_product_item.dart';
 class ManageProduct extends StatelessWidget {
   const ManageProduct({super.key});
   static const routeName = '/Manage-Product';
+
+  Future<void> _refreshproducts(BuildContext context) async {
+    await Provider.of<ProductDataInfo>(context, listen: false)
+        .fetchandsetProducts();
+  }
+
   @override
   Widget build(BuildContext context) {
     final productsdata35 = Provider.of<ProductDataInfo>(context);
@@ -25,21 +31,24 @@ class ManageProduct extends StatelessWidget {
         ],
       ),
       drawer: AppDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView.builder(
-          itemCount: ghju.length,
-          itemBuilder: (_, i) => Column(
-            children: [
-              ManageProductItem(
-                ghju[i].id ?? '',
-                ghju[i].title,
-                ghju[i].imageUrl,
+      body: RefreshIndicator(
+        onRefresh: () => _refreshproducts(context),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView.builder(
+            itemCount: ghju.length,
+            itemBuilder: (_, i) => Column(
+              children: [
+                ManageProductItem(
+                  ghju[i].id ?? '',
+                  ghju[i].title,
+                  ghju[i].imageUrl,
 
-                //this shows that we are just picking some info from productsdataInfo
-              ),
-              Divider(color: Theme.of(context).primaryColor)
-            ],
+                  //this shows that we are just picking some info from productsdataInfo
+                ),
+                Divider(color: Theme.of(context).primaryColor)
+              ],
+            ),
           ),
         ),
       ),
