@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recap_shops/providers/auth.dart';
 import 'package:recap_shops/screen/product_detail_screen.dart';
 import '../providers/product.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context);
     final cart = Provider.of<Cart>(context, listen: false);
+    final authData = Provider.of<Auth>(context, listen: false);
 
     return GridTile(
       child: GestureDetector(
@@ -39,7 +41,7 @@ class ProductItem extends StatelessWidget {
                 product.isFavorite ? Icons.favorite : Icons.favorite_border),
             color: Theme.of(context).accentColor,
             onPressed: () {
-              product.toggleFavouriteStatus();
+              product.toggleFavouriteStatus(authData.token, authData.userId);
             },
             // color: Theme.of(context).accentColor,
           ),

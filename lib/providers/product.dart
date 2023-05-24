@@ -32,13 +32,13 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleFavouriteStatus() async {
+  void toggleFavouriteStatus(String? token, String? userId) async {
     final oldstatus = isFavorite;
     try {
       isFavorite = !isFavorite;
       notifyListeners();
       final url = Uri.parse(
-          'https://bunbenakin--test-default-rtdb.firebaseio.com/Products-Data-Info/$id.json');
+          'https://bunbenakin--test-default-rtdb.firebaseio.com/UserFavourites/$userId/$id.json?auth=$token'); // the $id here is the product id; what we now need is the userid.. we are changing the url from products-data-info to userfavourites
       final response = await http.put(url,
           body: json.encode(
             isFavorite,

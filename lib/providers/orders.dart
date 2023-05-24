@@ -21,32 +21,15 @@ class OrderItem with ChangeNotifier {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
-
+  final String? authToken;
+  Orders(this.authToken, this._orders);
   List<OrderItem> get orders {
     return [..._orders];
   }
 
-  // Future<void> fetchandsetOrders() async {
-  //   final url = Uri.parse(
-  //       'https://bunbenakin--test-default-rtdb.firebaseio.com/orders.json');
-  //  // try {
-  //   final List<OrderItem> loadedorders = [];
-  //     final response = await http.get(url);
-  //     final extractedData = json.decode(response.body) as Map<String, dynamic>;
-  //     if (extractedData == null){
-  //       return;
-  //     }
-  //     extractedData.forEach((orderId, OrderData) {loadedorders.add(OrderItem(Id: orderId, amount: OrderData['amount'], product: (OrderData['product'] as List<dynamic>).map((item) => CartItem(id: item['id'], title: item['title'], quantity: item['quantity'], price: item['price'])).toList(), dateTime: DateTime.parse(OrderData['datetime'],),));});
-  //  _orders = loadedorders.reversed.toList();
-  //  //notifyListeners();
-  //  // } catch (error) {
-  //    // throw (error);
-  //   }
-  // }
-
   Future<void> fetchandsetOrder() async {
     final url = Uri.parse(
-        'https://bunbenakin--test-default-rtdb.firebaseio.com/orders.json');
+        'https://bunbenakin--test-default-rtdb.firebaseio.com/orders.json?auth=$authToken');
     final List<OrderItem> loadedOrders = [];
     final response = await http.get(url);
 
@@ -74,7 +57,7 @@ class Orders with ChangeNotifier {
 
   Future<void> addorder(List<CartItem> cartProducts, double total) async {
     final url = Uri.parse(
-        'https://bunbenakin--test-default-rtdb.firebaseio.com/orders.json');
+        'https://bunbenakin--test-default-rtdb.firebaseio.com/orders.json?auth=$authToken');
     final timeStamp = DateTime.now();
     final response = await http.post(url,
         body: json.encode({

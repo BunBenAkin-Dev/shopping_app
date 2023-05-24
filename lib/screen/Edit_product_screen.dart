@@ -110,10 +110,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
       try {
         await Provider.of<ProductDataInfo>(context, listen: false)
             .addProduct(_editedProduct);
-      } catch (onError) {
-        await Provider.of<ProductDataInfo>(context, listen: false)
-            .addProduct(_editedProduct);
-      } catch (error) {
+      } catch (onError)
+      // {
+      //   await Provider.of<ProductDataInfo>(context, listen: false)
+      //       .addProduct(_editedProduct);
+      // } catch (error)
+      {
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(

@@ -43,6 +43,11 @@ class ProductDataInfo with ChangeNotifier {
     //   ),
   ];
 
+  final String? authToken;
+  final String? userId;
+
+  ProductDataInfo(this.authToken, this.userId, this._items);
+
   List<Product> get items {
     return [..._items];
   }
@@ -59,34 +64,42 @@ class ProductDataInfo with ChangeNotifier {
 
   Future<void> fetchandsetProducts() async {
     final url = Uri.parse(
-        'https://bunbenakin--test-default-rtdb.firebaseio.com/Products-Data-Info.json');
+        'https://bunbenakin--test-default-rtdb.firebaseio.com/Products-Data-Info.json?auth=$authToken');
     try {
       final response = await http.get(url);
       final List<Product> loadedProducts = [];
       final extractedData = json.decode(response.body) as Map<String,
           dynamic>; // this tells dart that the values are dynamic
-      // if (extractedData == null) {
-      //   return;
-      // }
+      if (extractedData == null) {
+        return;
+      }
+      final urlFav = Uri.parse(
+          'https://bunbenakin--test-default-rtdb.firebaseio.com/UserFavourites/$userId.json?auth=$authToken'); //wer remove this because we are not looking for a specific product Id anymore
+      final favoriteResponse = await http.get(urlFav);
+      final favouriteData = json.decode(favoriteResponse.body);
       extractedData.forEach((ProdId, ProdData) {
         loadedProducts.add(Product(
             id: ProdId,
             title: ProdData['title'],
             description: ProdData['description'],
             price: ProdData['price'],
-            isFavorite: ProdData['isFavorite'],
+            isFavorite: favouriteData == null
+                ? false // if favourite data is null pls input false on the data base
+                : favouriteData[
+                        ProdId] ?? // the question mark states that if we dont find no entry for that Id we set it to false
+                    false, //we will have keys which match our productID so we add ProdId has the key
             imageUrl: ProdData['imageUrl']));
       });
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
-      throw error;
+      print(error);
     }
   }
 
   Future<void> addProduct(Product product) async {
     final url = Uri.parse(
-        'https://bunbenakin--test-default-rtdb.firebaseio.com/Products-Data-Info.json');
+        'https://bunbenakin--test-default-rtdb.firebaseio.com/Products-Data-Info.json?auth=$authToken');
     try {
       final response = await http.post(
         url,
@@ -95,7 +108,7 @@ class ProductDataInfo with ChangeNotifier {
           'description': product.description,
           'price': product.price,
           'imageUrl': product.imageUrl,
-          'isFavorite': product.isFavorite,
+          // 'isFavorite': product.isFavorite, we are removing is favourite becuas we dont want it because a new data should not have a favourite status instaed we embedd it in the user id with a new file holder
         }),
       );
       final newProduct = Product(
@@ -125,7 +138,7 @@ class ProductDataInfo with ChangeNotifier {
     final _proIndex = _items.indexWhere((prod) => prod.id == id);
 
     final url = Uri.parse(
-        'https://bunbenakin--test-default-rtdb.firebaseio.com/Products-Data-Info/$id.json');
+        'https://bunbenakin--test-default-rtdb.firebaseio.com/Products-Data-Info/$id.json?auth=$authToken'); //the id is needed to updateproduct
     await http.patch(url,
         body: json.encode({
           'title': newproduct.title,
@@ -147,7 +160,7 @@ class ProductDataInfo with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url = Uri.parse(
-        'https://bunbenakin--test-default-rtdb.firebaseio.com/Products-Data-Info/$id.json');
+        'https://bunbenakin--test-default-rtdb.firebaseio.com/Products-Data-Info/$id.json?auth=$authToken'); // the $id is needed to delete product
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     Product? existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
